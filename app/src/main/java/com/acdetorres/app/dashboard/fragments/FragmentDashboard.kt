@@ -70,6 +70,7 @@ class FragmentDashboard : Fragment() {
 
     //Observes the livedata being updated with calls from user interaction
     fun observeLiveData() {
+        //LiveData handles it's lifecycle!
         viewModel.searchResult.observe(viewLifecycleOwner, {
             when (it) {
                 //Displays the errors
