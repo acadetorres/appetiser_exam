@@ -1,5 +1,6 @@
 package com.acdetorres.app.di.network
 
+//This exposes network state to Fragments/Activity
 sealed class Resource<T>(
     val data: T? = null,
     val message: String? = null
