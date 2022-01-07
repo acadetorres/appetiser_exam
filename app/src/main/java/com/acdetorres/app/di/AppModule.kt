@@ -27,7 +27,9 @@ object AppModule {
 
         //LOGGER
         val loggingInterceptor = HttpLoggingInterceptor()
+
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
         okHttpClient.addInterceptor(loggingInterceptor)
 
         //Plugin Logger for easier view on JSON responses and raw responses.
@@ -39,6 +41,8 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+
 
     //Provides ApiService to Repositories
     @Singleton
