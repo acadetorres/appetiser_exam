@@ -16,10 +16,13 @@ class DashboardViewModel @Inject constructor(
     val repo : SearchRepository
 ) : ViewModel() {
 
+    //Observeable to UI
     val searchResult : LiveData<Resource<GetSearchTermResponse>> get() = _searchResult
 
     val _searchResult = MutableLiveData<Resource<GetSearchTermResponse>>()
 
+    //executes and collects the search and result of API call then updates _searchResult
+    //so UI can observe the changes
     suspend fun getSearchResult(term : String)  {
         repo.getSearchedTerm(term).collect {
             _searchResult.postValue(it)

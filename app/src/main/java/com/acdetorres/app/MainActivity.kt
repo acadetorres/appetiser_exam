@@ -25,4 +25,8 @@ class MainActivity : AppCompatActivity() {
 
         navController.graph = navGraph
     }
+
+    fun showLoading(isLoading : Boolean) {
+
+    }
 }

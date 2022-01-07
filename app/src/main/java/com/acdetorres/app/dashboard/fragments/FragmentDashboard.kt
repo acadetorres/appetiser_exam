@@ -1,12 +1,15 @@
 package com.acdetorres.app.dashboard.fragments
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.acdetorres.app.MainActivity
 import com.acdetorres.app.R
 import com.acdetorres.app.dashboard.fragments.viewmodel.DashboardViewModel
 import com.acdetorres.app.databinding.FragmentDashboardBinding
@@ -36,30 +39,45 @@ class FragmentDashboard : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observeLiveData()
 
+        val timer = object : CountDownTimer(500, 500) {
+            override fun onTick(p0: Long) {
+                //Nothing
+            }
 
-        lifecycleScope.launch {
-            viewModel.getSearchResult("star")
+            override fun onFinish() {
+                lifecycleScope.launch {
+                    val term = binding.etSearchBox.text.toString()
+                    if (term.isNotEmpty()) {
+                        viewModel.getSearchResult(term)
+                    }
+                }
+            }
         }
 
+        //Cancels and starts the polling after text change of searching of term
+        binding.etSearchBox.doAfterTextChanged {
+            timer.cancel()
+            timer.start()
+        }
+    }
 
 
+    //Observes the livedata being updated with calls from user interaction
+    fun observeLiveData() {
         viewModel.searchResult.observe(viewLifecycleOwner, {
             when (it) {
-                is Resource.Error -> {
+                //Displays the errors
+                is Resource.Error ->  Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_SHORT).show()
 
-                    Timber.e(it.toString())
-                    Snackbar.make(binding.root, it.message.toString(), Snackbar.LENGTH_SHORT).show()
-                }
-                is Resource.Loading -> {
-                    Timber.e(it.toString())
-                    showLoading(it.loading)
-                }
+                //Displays the loading state
+                is Resource.Loading -> showLoading(it.loading)
+
+                //Displays the result from the API calls
                 is Resource.Success -> {
-
                     if (it.data != null) {
                         val data = it.data
-                        Timber.e("Result[0] ${data.results[0].artistName}")
                     }
                 }
             }
@@ -67,7 +85,7 @@ class FragmentDashboard : Fragment() {
     }
 
     fun showLoading(isLoading : Boolean) {
-
+        (activity as MainActivity).showLoading(isLoading)
     }
 
 }
