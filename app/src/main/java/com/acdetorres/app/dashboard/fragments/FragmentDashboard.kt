@@ -9,15 +9,16 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.acdetorres.app.MainActivity
-import com.acdetorres.app.R
+import com.acdetorres.app.dashboard.fragments.adapters.ItemTracksAdapter
 import com.acdetorres.app.dashboard.fragments.viewmodel.DashboardViewModel
+import com.acdetorres.app.dashboard.repository.api_response.GetSearchTermResponse
 import com.acdetorres.app.databinding.FragmentDashboardBinding
 import com.acdetorres.app.di.network.Resource
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class FragmentDashboard : Fragment() {
@@ -40,6 +41,9 @@ class FragmentDashboard : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeLiveData()
+
+        binding.rvTracks.layoutManager = LinearLayoutManager(requireContext())
+
 
         val timer = object : CountDownTimer(500, 500) {
             override fun onTick(p0: Long) {
@@ -78,6 +82,14 @@ class FragmentDashboard : Fragment() {
                 is Resource.Success -> {
                     if (it.data != null) {
                         val data = it.data
+
+                        val adapter = ItemTracksAdapter(data.results, object : ItemTracksAdapter.ItemTracksAdapterInterface {
+                            override fun onClick(track: GetSearchTermResponse.Result) {
+                                //TODO
+                            }
+                        })
+
+                        binding.rvTracks.adapter = adapter
                     }
                 }
             }

@@ -5,6 +5,7 @@ import com.acdetorres.app.di.network.ApiService
 import com.acdetorres.app.di.network.NetworkHandler
 import com.acdetorres.app.di.network.Resource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 import javax.inject.Inject
 
@@ -15,6 +16,10 @@ class SearchRepository @Inject constructor(val apiService: ApiService) {
     private val networkHandler = NetworkHandler()
 
     suspend fun getSearchedTerm(term : String) : Flow<Resource<GetSearchTermResponse>> {
-        return (networkHandler.handleRequests(apiService.getSearchTerm(term, "au", "movie")))
+        val flow = flow {
+            val response = apiService.getSearchTerm(term, "au", "movie")
+            emit(Resource.Success(response))
+        }
+        return networkHandler.handleRequests(flow)
     }
 }

@@ -1,28 +1,24 @@
 package com.acdetorres.app.di.network
 
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
+import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.Exception
 
 //This class would handle all the errors from any API calls.
 class NetworkHandler{
 
-    fun <T:Any>handleRequests(response : T) = flow {
-        emit(Resource.Loading(true))
+    fun <T:Any>handleRequests(response : Flow<Resource<T>>) : Flow<Resource<T>> {
 
-        // THIS is a bug and needs to be added on consecutive data emission
-        delay(100)
+        return response.catch { exception ->
+            //Here we can catch each exception like http exception, malformed responses, etc.  For the simplicity for now we'll just emit the message from exception
+            emit(Resource.Loading(false))
+            emit(Resource.Error(exception.message.toString()))
 
-        try {
-            emit(Resource.Loading(false))
-            emit(Resource.Success(response))
-        } catch (e : Exception) {
-            //Here we can emit OR transform the data for a data class we need for exposing non 200 status or other exceptions
-            Timber.e("ERROR MESSAGE : ${e.message.toString()}")
-            emit(Resource.Loading(false))
-            emit(Resource.Error(e.message.toString()))
+        }.onStart {
+            emit(Resource.Loading(true))
+            delay(100) // This is a bug, on consecutive emit, it bugs and not emitting the next values so this is added
         }
-
     }
 }
