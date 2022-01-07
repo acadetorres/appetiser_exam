@@ -1,11 +1,15 @@
 package com.acdetorres.app.dashboard.fragments
 
+import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +22,7 @@ import com.acdetorres.app.databinding.FragmentDashboardBinding
 import com.acdetorres.app.di.network.Resource
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -51,9 +56,11 @@ class FragmentDashboard : Fragment() {
             }
 
             override fun onFinish() {
-                lifecycleScope.launch {
+                //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
+                lifecycleScope.launch(Dispatchers.Main) {
                     val term = binding.etSearchBox.text.toString()
                     if (term.isNotEmpty()) {
+                        (activity as MainActivity).closeKeyboard()
                         viewModel.getSearchResult(term)
                     }
                 }

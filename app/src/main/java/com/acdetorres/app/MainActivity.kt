@@ -1,7 +1,10 @@
 package com.acdetorres.app
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.navigation.findNavController
 import com.acdetorres.app.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +30,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showLoading(isLoading : Boolean) {
+        when (isLoading) {
+            true -> binding.loading.visibility = View.VISIBLE
+            else -> binding.loading.visibility = View.GONE
+        }
+    }
 
+    fun closeKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm: InputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 }
