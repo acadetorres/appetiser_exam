@@ -5,8 +5,10 @@
       <map>
         <entry key="..\:/Users/Ad/AndroidStudioProjects/appetiser_exam/app/src/main/res/drawable/shape_full_radius_m.xml" value="0.30520833333333336" />
         <entry key="..\:/Users/Ad/AndroidStudioProjects/appetiser_exam/app/src/main/res/layout/activity_main.xml" value="0.20260416666666667" />
-        <entry key="..\:/Users/Ad/AndroidStudioProjects/appetiser_exam/app/src/main/res/layout/fragment_dashboard.xml" value="0.33" />
+        <entry key="..\:/Users/Ad/AndroidStudioProjects/appetiser_exam/app/src/main/res/layout/fragment_dashboard.xml" value="0.19584954604409857" />
+        <entry key="..\:/Users/Ad/AndroidStudioProjects/appetiser_exam/app/src/main/res/layout/fragment_selected_track.xml" value="0.265625" />
         <entry key="..\:/Users/Ad/AndroidStudioProjects/appetiser_exam/app/src/main/res/layout/item_tracks.xml" value="0.6557377049180327" />
+        <entry key="..\:/Users/Ad/AndroidStudioProjects/appetiser_exam/app/src/main/res/layout/rv_dashboard.xml" value="0.18958333333333333" />
       </map>
     </option>
   </component>

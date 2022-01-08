@@ -9,12 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.acdetorres.app.MainActivity
+import com.acdetorres.app.dashboard.fragments.adapters.DashboardAdapter
 import com.acdetorres.app.dashboard.fragments.adapters.ItemTracksAdapter
 import com.acdetorres.app.dashboard.fragments.viewmodel.DashboardViewModel
 import com.acdetorres.app.dashboard.repository.api_response.GetSearchTermResponse
@@ -24,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.internal.notify
 
 @AndroidEntryPoint
 class FragmentDashboard : Fragment() {
@@ -32,6 +35,8 @@ class FragmentDashboard : Fragment() {
 
     //View binding
     lateinit var binding : FragmentDashboardBinding
+
+    private lateinit var adapter : DashboardAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,31 +52,20 @@ class FragmentDashboard : Fragment() {
 
         observeLiveData()
 
-        binding.rvTracks.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvDashboard.layoutManager = LinearLayoutManager(requireContext())
 
-
-        val timer = object : CountDownTimer(500, 500) {
-            override fun onTick(p0: Long) {
-                //Nothing
-            }
-
-            override fun onFinish() {
-                //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
-                lifecycleScope.launch(Dispatchers.Main) {
-                    val term = binding.etSearchBox.text.toString()
-                    if (term.isNotEmpty()) {
-                        (activity as MainActivity).closeKeyboard()
-                        viewModel.getSearchResult(term)
-                    }
+        adapter = DashboardAdapter(1, null, object : DashboardAdapter.DashboardRvInterface {
+            override fun onSearch(term: String) {
+                lifecycleScope.launch {
+                    viewModel.getSearchResult(term)
                 }
-            }
-        }
 
-        //Cancels and starts the polling after text change of searching of term
-        binding.etSearchBox.doAfterTextChanged {
-            timer.cancel()
-            timer.start()
-        }
+            }
+
+        })
+
+        binding.rvDashboard.adapter = adapter
+
     }
 
 
@@ -91,13 +85,11 @@ class FragmentDashboard : Fragment() {
                     if (it.data != null) {
                         val data = it.data
 
-                        val adapter = ItemTracksAdapter(data.results, object : ItemTracksAdapter.ItemTracksAdapterInterface {
-                            override fun onClick(track: GetSearchTermResponse.Result) {
-                                //TODO
-                            }
-                        })
+                        adapter.termResponse = data
 
-                        binding.rvTracks.adapter = adapter
+                        adapter.notifyDataSetChanged()
+
+
                     }
                 }
             }

@@ -10,6 +10,7 @@ import com.acdetorres.app.dashboard.repository.api_response.GetSearchTermRespons
 import com.acdetorres.app.databinding.ItemTracksBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import timber.log.Timber
 
 class ItemTracksAdapter(
     val data : List<GetSearchTermResponse.Result>,
@@ -20,8 +21,10 @@ class ItemTracksAdapter(
     lateinit var mContext : Context
 
     inner class viewHolder(val binding : ItemTracksBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind (track : GetSearchTermResponse.Result) {
-            
+        fun bind (track : GetSearchTermResponse.Result, position : Int) {
+
+            Timber.e("Check if onbind is called : $position")
+
             binding.tvTrackname.text = track.trackName
 
             binding.tvGenre.text = track.primaryGenreName
@@ -51,7 +54,7 @@ class ItemTracksAdapter(
     }
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
-        holder.bind(data[position])
+        holder.bind(data[position], position)
     }
 
     override fun getItemCount(): Int {
