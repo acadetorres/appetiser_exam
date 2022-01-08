@@ -9,6 +9,28 @@
         android:id="@+id/fragmentDashboard"
         android:name="com.acdetorres.app.dashboard.fragments.FragmentDashboard"
         android:label="fragment_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_fragmentDashboard_to_fragmentSelectedTrack"
+            app:destination="@id/fragmentSelectedTrack" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentSelectedTrack"
+        android:name="com.acdetorres.app.dashboard.fragments.FragmentSelectedTrack"
+        android:label="fragment_selected_track"
+        tools:layout="@layout/fragment_selected_track" >
+        <argument
+            android:name="trackName"
+            app:argType="string" />
+        <argument
+            android:name="previewUrl"
+            app:argType="string" />
+        <argument
+            android:name="genre"
+            app:argType="string" />
+        <argument
+            android:name="description"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

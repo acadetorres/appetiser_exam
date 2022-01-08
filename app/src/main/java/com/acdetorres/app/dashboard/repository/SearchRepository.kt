@@ -4,6 +4,7 @@ import com.acdetorres.app.dashboard.repository.api_response.GetSearchTermRespons
 import com.acdetorres.app.di.network.ApiService
 import com.acdetorres.app.di.network.NetworkHandler
 import com.acdetorres.app.di.network.Resource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 
 //Repository, all data will be fetched and stored here.
-class SearchRepository @Inject constructor(val apiService: ApiService) {
+class SearchRepository @Inject constructor(private val apiService: ApiService) {
 
     private val networkHandler = NetworkHandler()
 

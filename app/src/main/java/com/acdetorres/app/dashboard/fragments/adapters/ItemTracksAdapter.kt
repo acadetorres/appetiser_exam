@@ -18,12 +18,14 @@ class ItemTracksAdapter(
 
 ): RecyclerView.Adapter<ItemTracksAdapter.viewHolder>() {
 
+    //Context used for random material color generator
     lateinit var mContext : Context
 
     inner class viewHolder(val binding : ItemTracksBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind (track : GetSearchTermResponse.Result, position : Int) {
+        fun bind (track : GetSearchTermResponse.Result) {
 
-            Timber.e("Check if onbind is called : $position")
+
+            //Displays texts and Glides load the image to the imageview
 
             binding.tvTrackname.text = track.trackName
 
@@ -36,10 +38,11 @@ class ItemTracksAdapter(
             binding.tvThumbnail.text = track.trackName[0].toString()
             
             Glide.with(binding.root)
-                .load(track.artworkUrl60)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .load(track.artworkUrl100)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) //Cache for faster loading
                 .into(binding.ivArtwork)
 
+            //When the layout is clicked means the item is clicked
             binding.clLayout.setOnClickListener {
                 onClickInterface.onClick(track)
             }
@@ -54,7 +57,8 @@ class ItemTracksAdapter(
     }
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
-        holder.bind(data[position], position)
+        holder.bind(data[position])
+        Timber.e("Position of onBindViewHolder : $position")
     }
 
     override fun getItemCount(): Int {
@@ -62,9 +66,12 @@ class ItemTracksAdapter(
     }
 
     interface ItemTracksAdapterInterface {
+        //interface to FragmentDashboard
         fun onClick(track : GetSearchTermResponse.Result)
     }
 
+
+    //Random Material Color Generator
     private fun getMatColor(typeColor: String): Int {
         var returnColor: Int = Color.BLACK
         val arrayId = mContext.resources.getIdentifier(

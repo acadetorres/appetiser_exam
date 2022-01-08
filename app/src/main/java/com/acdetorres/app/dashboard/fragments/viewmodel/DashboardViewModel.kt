@@ -23,7 +23,7 @@ class DashboardViewModel @Inject constructor(
 
     init {
         //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
-        viewModelScope.launch(Dispatchers.Main) {
+        viewModelScope.launch(Dispatchers.IO) {
             getSearchResult(getRandomString(1))
         }
     }
@@ -45,7 +45,7 @@ class DashboardViewModel @Inject constructor(
     //so UI can observe the changes
     suspend fun getSearchResult(term : String)  {
         repo.getSearchedTerm(term).collect {
-            _searchResult.value = it
+            _searchResult.postValue(it)
         }
     }
 
