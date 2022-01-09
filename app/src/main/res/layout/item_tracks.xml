@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
+        android:background="#05000000"
         >
 
 
@@ -68,18 +69,21 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:lines="1"
+                android:textColor="@color/black"
                 />
 
             <TextView
                 android:id="@+id/tv_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 />
 
             <TextView
                 android:id="@+id/tv_genre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

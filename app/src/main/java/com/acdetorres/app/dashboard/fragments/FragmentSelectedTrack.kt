@@ -34,6 +34,15 @@ class FragmentSelectedTrack : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.tvTrackname.text = args.trackName
+
+        binding.tvGenre.text = args.genre
+
+        binding.tvPrice.text = args.price
+
+        binding.tvDescription.text = args.description
+
+
         val webView = binding.wvVideoPlayer
 
         val link = args.previewUrl
@@ -50,14 +59,7 @@ class FragmentSelectedTrack : Fragment() {
 
                 override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)
-                    (activity as MainActivity).showLoading(false)
                 }
-
-                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                    super.onPageStarted(view, url, favicon)
-                    (activity as MainActivity).showLoading(true)
-                }
-
             }
             webView.loadUrl(link)
             Timber.e(link)

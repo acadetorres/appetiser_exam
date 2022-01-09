@@ -31,7 +31,7 @@ class ItemTracksAdapter(
 
             binding.tvGenre.text = track.primaryGenreName
 
-            binding.tvPrice.text = track.trackPrice.toString()
+            binding.tvPrice.text = "$${track.trackPrice}"
 
             binding.tvThumbnail.setBackgroundColor(getMatColor("500"))
 

@@ -50,29 +50,6 @@ class FragmentDashboard : Fragment() {
 
         binding.rvTracks.layoutManager = LinearLayoutManager(requireContext())
 
-
-        val timer = object : CountDownTimer(500, 500) {
-            override fun onTick(p0: Long) {
-                //Nothing
-            }
-
-            override fun onFinish() {
-                //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val term = binding.etSearchBox.text.toString()
-                    if (term.isNotEmpty()) {
-                        (activity as MainActivity).closeKeyboard()
-                        viewModel.getSearchResult(term)
-                    }
-                }
-            }
-        }
-
-        //Cancels and starts the polling after text change of searching of term
-        binding.etSearchBox.doAfterTextChanged {
-            timer.cancel()
-            timer.start()
-        }
     }
 
 
@@ -96,9 +73,10 @@ class FragmentDashboard : Fragment() {
                             override fun onClick(track: GetSearchTermResponse.Result) {
 
                                 FragmentDashboardDirections.actionFragmentDashboardToFragmentSelectedTrack(
-                                    track.trackName,
+                                    if (track.trackName.isNullOrEmpty()) "" else track.trackName,
                                     track.previewUrl,
                                     track.primaryGenreName,
+                                    track.trackPrice.toString(),
                                     track.longDescription
                                 ).run {
                                     findNavController().navigate(this)
@@ -116,6 +94,32 @@ class FragmentDashboard : Fragment() {
 
     fun showLoading(isLoading : Boolean) {
         (activity as MainActivity).showLoading(isLoading)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val timer = object : CountDownTimer(500, 500) {
+            override fun onTick(p0: Long) {
+                //Nothing
+            }
+
+            override fun onFinish() {
+                //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val term = binding.etSearchBox.text.toString()
+                    if (term.isNotEmpty()) {
+                        (activity as MainActivity).closeKeyboard()
+                        viewModel.getSearchResult(term)
+                    }
+                }
+            }
+        }
+
+        //Cancels and starts the polling after text change of searching of term
+        binding.etSearchBox.doAfterTextChanged {
+            timer.cancel()
+            timer.start()
+        }
     }
 
 }

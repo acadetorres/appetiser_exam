@@ -29,6 +29,9 @@
             android:name="genre"
             app:argType="string" />
         <argument
+            android:name="price"
+            app:argType="string" />
+        <argument
             android:name="description"
             app:argType="string" />
     </fragment>
