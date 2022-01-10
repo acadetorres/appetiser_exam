@@ -1,10 +1,13 @@
 package com.acdetorres.app.di
 
+import android.content.Context
 import com.acdetorres.app.di.network.ApiService
+import com.acdetorres.app.di.shared_pref.SharedPref
 import com.localebro.okhttpprofiler.OkHttpProfilerInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 
-//In here are the modules. Only 1 module is used here that provides the retrofit and ApiService
+//In here are the modules. Only 1 module is used here that provides the retrofit, ApiService and sharedPref
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -49,6 +52,13 @@ object AppModule {
     @Provides
     fun provideApiService(retrofit: Retrofit) : ApiService {
         return retrofit.create(ApiService::class.java)
+    }
+
+    //Provides Shared Preferences for offline storage
+    @Singleton
+    @Provides
+    fun provideSharedPref(@ApplicationContext context : Context) : SharedPref {
+        return SharedPref(context)
     }
 
 

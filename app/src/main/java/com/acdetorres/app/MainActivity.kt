@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         setupNavHost()
     }
 
+    //Setup the navhost
     private fun setupNavHost() {
         val navController = findNavController(R.id.navHostMain)
         val graphInflater = navController.navInflater
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         navController.graph = navGraph
     }
 
+    //Shows the loading view
     fun showLoading(isLoading : Boolean) {
         when (isLoading) {
             true -> binding.loading.visibility = View.VISIBLE
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //Closes the keyboard
     fun closeKeyboard() {
         val view = this.currentFocus
         if (view != null) {

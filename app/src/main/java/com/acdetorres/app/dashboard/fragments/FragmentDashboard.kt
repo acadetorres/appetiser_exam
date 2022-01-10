@@ -21,10 +21,12 @@ import com.acdetorres.app.dashboard.fragments.viewmodel.DashboardViewModel
 import com.acdetorres.app.dashboard.repository.api_response.GetSearchTermResponse
 import com.acdetorres.app.databinding.FragmentDashboardBinding
 import com.acdetorres.app.di.network.Resource
+import com.acdetorres.app.di.shared_pref.SharedPref
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FragmentDashboard : Fragment() {
@@ -33,6 +35,10 @@ class FragmentDashboard : Fragment() {
 
     //View binding
     lateinit var binding : FragmentDashboardBinding
+
+    //Injects shared pref, this should be on the repository! But I got terrible flu and no longer have time today.
+    @Inject
+    lateinit var sharedPref : SharedPref
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,8 +52,27 @@ class FragmentDashboard : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Checks if lastViewedTrack is not null, then navigate to it
+        val lastViewedTrack = sharedPref.getLastSelectedTrack()
+
+        if (lastViewedTrack != null) {
+            FragmentDashboardDirections.actionFragmentDashboardToFragmentSelectedTrack(
+                lastViewedTrack.trackName,
+                lastViewedTrack.previewUrl,
+                lastViewedTrack.genre,
+                lastViewedTrack.price,
+                lastViewedTrack.description,
+                lastViewedTrack.wrapperType,
+                lastViewedTrack.trackUrl
+            ).run {
+                findNavController().navigate(this)
+            }
+        }
+
+        //Observes the liveData
         observeLiveData()
 
+        //setup the recyclerview's layout manager
         binding.rvTracks.layoutManager = LinearLayoutManager(requireContext())
 
     }
@@ -69,8 +94,11 @@ class FragmentDashboard : Fragment() {
                     if (it.data != null) {
                         val data = it.data
 
+                        //Adapter of the Recycler View
                         val adapter = ItemTracksAdapter(data.results, object : ItemTracksAdapter.ItemTracksAdapterInterface {
                             override fun onClick(track: GetSearchTermResponse.Result) {
+
+                                sharedPref.storeSelectedTrackDetails(track)
 
                                 FragmentDashboardDirections.actionFragmentDashboardToFragmentSelectedTrack(
                                     if (track.trackName.isNullOrEmpty()) "" else track.trackName,
@@ -94,6 +122,7 @@ class FragmentDashboard : Fragment() {
         })
     }
 
+    //Show Loading state or not
     fun showLoading(isLoading : Boolean) {
         (activity as MainActivity).showLoading(isLoading)
     }
@@ -106,10 +135,12 @@ class FragmentDashboard : Fragment() {
             }
 
             override fun onFinish() {
-                //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
+                //Launched in Main thread since I'm using setValue, because postValue would sometimes discards the previous values before the last
                 lifecycleScope.launch(Dispatchers.Main) {
+                    //Current value of the SearchBox
                     val term = binding.etSearchBox.text.toString()
                     if (term.isNotEmpty()) {
+                        //Closes the keyboard and gets the Search Result
                         (activity as MainActivity).closeKeyboard()
                         viewModel.getSearchResult(term)
                     }

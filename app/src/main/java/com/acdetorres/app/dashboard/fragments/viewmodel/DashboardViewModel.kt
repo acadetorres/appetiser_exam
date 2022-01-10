@@ -19,18 +19,17 @@ class DashboardViewModel @Inject constructor(
     val repo : SearchRepository
 ) : ViewModel() {
 
-    //Init screen, randomize for every restart or new startup of app
-
     init {
-        //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
+        //Launched in main since postValue sometimes discards the previous values before the last
         viewModelScope.launch(Dispatchers.Main) {
+            //Randomize search result
             getSearchResult(getRandomString(1))
         }
     }
 
     //Random String generator
     private fun getRandomString(length: Int) : String {
-        val allowedChars = ('A'..'Z') + ('a'..'z')
+        val allowedChars = ('A'..'Z')
         return (1..length)
             .map { allowedChars.random() }
             .joinToString("")
@@ -41,7 +40,7 @@ class DashboardViewModel @Inject constructor(
 
     private val _searchResult = MutableLiveData<Resource<GetSearchTermResponse>>()
 
-    //executes and collects the search and result of API call then updates _searchResult
+    //executes and collects the search result of API call then updates _searchResult
     //so UI can observe the changes
     suspend fun getSearchResult(term : String)  {
         repo.getSearchedTerm(term).collect {

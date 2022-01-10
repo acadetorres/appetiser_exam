@@ -17,13 +17,24 @@ import com.acdetorres.app.databinding.FragmentSelectedTrackBinding
 import timber.log.Timber
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.OnBackPressedCallback
+import com.acdetorres.app.di.shared_pref.SharedPref
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class FragmentSelectedTrack : Fragment() {
 
+    //View binding
     lateinit var binding : FragmentSelectedTrackBinding
 
+    //Navigation arguments
     val args by navArgs<FragmentSelectedTrackArgs>()
+
+    //Directly injects shared pref to fragment since it's small data. This should be on the repository though.
+    @Inject
+    lateinit var sharedPref : SharedPref
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +48,7 @@ class FragmentSelectedTrack : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Setups the views
         binding.tvWrapperType.text = args.wrapperType
 
         binding.tvTrackname.text = args.trackName
@@ -49,10 +61,26 @@ class FragmentSelectedTrack : Fragment() {
 
         binding.btnBuy.text = "Buy($${args.price})"
 
+        //Navigates up and clear the last selected track
         binding.icClose.setOnClickListener {
             findNavController().navigateUp()
+            sharedPref.clearLastSelectedTrack()
         }
 
+        //Handles back press to clear the Last Selected Track on back press
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    sharedPref.clearLastSelectedTrack()
+                    findNavController().navigateUp()
+                }
+            }
+        )
+
+
+
+        //Opens the trackUrl on browser
         binding.btnBuy.setOnClickListener {
             val i = Intent(Intent.ACTION_VIEW)
             i.data = Uri.parse(args.trackUrl)
@@ -60,6 +88,7 @@ class FragmentSelectedTrack : Fragment() {
         }
 
 
+        //Loads the preview URL on web view
         val webView = binding.wvVideoPlayer
 
         val link = args.previewUrl

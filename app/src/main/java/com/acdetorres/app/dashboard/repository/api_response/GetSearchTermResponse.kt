@@ -3,6 +3,7 @@ package com.acdetorres.app.dashboard.repository.api_response
 
 import com.google.gson.annotations.SerializedName
 
+//Generated from Json to kotlin data class plugin
 data class GetSearchTermResponse(
     @SerializedName("resultCount")
     val resultCount: Int,

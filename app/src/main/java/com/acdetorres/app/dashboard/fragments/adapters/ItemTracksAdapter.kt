@@ -33,13 +33,14 @@ class ItemTracksAdapter(
 
             binding.tvPrice.text = "$${track.trackPrice}"
 
+            //Sets the randombackground color for the thumbnail
             binding.tvThumbnail.setBackgroundColor(getMatColor("500"))
-
+            //Takes the first letter of the TrackName as the thumbnail
             binding.tvThumbnail.text = track.trackName[0].toString()
             
             Glide.with(binding.root)
                 .load(track.artworkUrl100)
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) //Cache for faster loading
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) //Cache for faster loading next time
                 .into(binding.ivArtwork)
 
             //When the layout is clicked means the item is clicked
@@ -57,7 +58,7 @@ class ItemTracksAdapter(
     }
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
-        holder.bind(data[position])
+        holder.bind(data[position]) // on bind gives the data[position]
         Timber.e("Position of onBindViewHolder : $position")
     }
 
