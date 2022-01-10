@@ -23,7 +23,7 @@ class DashboardViewModel @Inject constructor(
 
     init {
         //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             getSearchResult(getRandomString(1))
         }
     }
@@ -36,7 +36,7 @@ class DashboardViewModel @Inject constructor(
             .joinToString("")
     }
 
-    //Observable to UI, this handles the persistence of the state of the app
+    //Observable to UI, this handles the persistence of the state of the app even on configuration changes
     val searchResult : LiveData<Resource<GetSearchTermResponse>> get() = _searchResult
 
     private val _searchResult = MutableLiveData<Resource<GetSearchTermResponse>>()
@@ -45,7 +45,7 @@ class DashboardViewModel @Inject constructor(
     //so UI can observe the changes
     suspend fun getSearchResult(term : String)  {
         repo.getSearchedTerm(term).collect {
-            _searchResult.postValue(it)
+            _searchResult.value = it
         }
     }
 

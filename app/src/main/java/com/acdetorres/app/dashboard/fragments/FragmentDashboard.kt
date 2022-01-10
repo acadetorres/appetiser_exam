@@ -74,10 +74,12 @@ class FragmentDashboard : Fragment() {
 
                                 FragmentDashboardDirections.actionFragmentDashboardToFragmentSelectedTrack(
                                     if (track.trackName.isNullOrEmpty()) "" else track.trackName,
-                                    track.previewUrl,
+                                    if (track.previewUrl.isNullOrEmpty()) "" else track.previewUrl,
                                     track.primaryGenreName,
                                     track.trackPrice.toString(),
-                                    track.longDescription
+                                    track.longDescription,
+                                    track.wrapperType,
+                                    track.trackViewUrl
                                 ).run {
                                     findNavController().navigate(this)
                                 }
@@ -105,7 +107,7 @@ class FragmentDashboard : Fragment() {
 
             override fun onFinish() {
                 //Launched in Main since UI Draw is priority and postValue on live data needs the delay fix that disrupts the user experience
-                lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(Dispatchers.Main) {
                     val term = binding.etSearchBox.text.toString()
                     if (term.isNotEmpty()) {
                         (activity as MainActivity).closeKeyboard()

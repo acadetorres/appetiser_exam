@@ -9,11 +9,14 @@ import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.acdetorres.app.MainActivity
 import com.acdetorres.app.R
 import com.acdetorres.app.databinding.FragmentSelectedTrackBinding
 import timber.log.Timber
+import android.content.Intent
+import android.net.Uri
 
 
 class FragmentSelectedTrack : Fragment() {
@@ -34,13 +37,27 @@ class FragmentSelectedTrack : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.tvWrapperType.text = args.wrapperType
+
         binding.tvTrackname.text = args.trackName
 
         binding.tvGenre.text = args.genre
 
-        binding.tvPrice.text = args.price
+        binding.tvPrice.text = "$${args.price}"
 
         binding.tvDescription.text = args.description
+
+        binding.btnBuy.text = "Buy($${args.price})"
+
+        binding.icClose.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        binding.btnBuy.setOnClickListener {
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse(args.trackUrl)
+            startActivity(i)
+        }
 
 
         val webView = binding.wvVideoPlayer

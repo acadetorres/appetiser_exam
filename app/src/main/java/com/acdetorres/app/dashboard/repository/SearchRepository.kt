@@ -19,6 +19,7 @@ class SearchRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getSearchedTerm(term : String) : Flow<Resource<GetSearchTermResponse>> {
         val flow = flow {
             val response = apiService.getSearchTerm(term, "au", "movie")
+            emit(Resource.Loading(false))
             emit(Resource.Success(response))
         }
         return networkHandler.handleRequests(flow)
